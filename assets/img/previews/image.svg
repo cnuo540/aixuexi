@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <rect width="720" height="420" rx="28" fill="#fffaf5"/>
+  <rect x="28" y="28" width="664" height="54" rx="16" fill="#fff" stroke="#fed7aa"/>
+  <circle cx="58" cy="55" r="7" fill="#ff6b6b"/><circle cx="80" cy="55" r="7" fill="#fbbf24"/><circle cx="102" cy="55" r="7" fill="#34d399"/>
+  <rect x="126" y="47" width="178" height="16" rx="8" fill="#ec4899" opacity=".22"/>
+  <rect x="28" y="104" width="150" height="288" rx="20" fill="#ffedd5"/>
+  <rect x="52" y="132" width="78" height="16" rx="8" fill="#ec4899"/>
+  <rect x="52" y="172" width="100" height="12" rx="6" fill="#fdba74"/><rect x="52" y="204" width="86" height="12" rx="6" fill="#fdba74"/><rect x="52" y="236" width="112" height="12" rx="6" fill="#fdba74"/>
+  <rect x="204" y="104" width="230" height="116" rx="22" fill="#fff" stroke="#fed7aa"/>
+  <rect x="230" y="132" width="120" height="18" rx="9" fill="#ec4899"/>
+  <rect x="230" y="166" width="166" height="12" rx="6" fill="#fed7aa"/><rect x="230" y="192" width="132" height="12" rx="6" fill="#fed7aa"/>
+  <rect x="462" y="104" width="230" height="116" rx="22" fill="#fff" stroke="#fed7aa"/>
+  <rect x="488" y="132" width="92" height="18" rx="9" fill="#60a5fa"/>
+  <rect x="488" y="166" width="158" height="12" rx="6" fill="#bfdbfe"/><rect x="488" y="192" width="110" height="12" rx="6" fill="#bfdbfe"/>
+  <rect x="204" y="248" width="488" height="144" rx="24" fill="#fff" stroke="#fed7aa"/>
+  <path d="M235 354 C270 302, 306 324, 342 286 S420 267, 462 316 S542 334, 576 284 S642 295, 666 252" fill="none" stroke="#ec4899" stroke-width="8" stroke-linecap="round"/>
+  <text x="360" y="236" text-anchor="middle" font-family="Microsoft YaHei, Arial" font-size="22" font-weight="700" fill="#7c2d12">AI 绘图工具界面</text>
+</svg>
