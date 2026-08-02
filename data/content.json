@@ -7,16 +7,16 @@
     "index": {
       "title": "首页 - AI分享",
       "description": "AI分享个人软件分享平台首页",
-      "eyebrow": "好用软件 · 实用教程 · 免费分享",
-      "heading": "把我常用的 AI 软件和教程整理给你",
+      "eyebrow": "自写软件 · 实用教程 · 免费分享",
+      "heading": "把我自己用AI制作的软件和教程整理给你",
       "lead": "这里是个人软件分享平台。每个软件都按一行展示，包含软件图标、界面图、使用说明，以及需要输入对应密码才能查看的下载链接。",
       "primaryAction": "查看软件列表",
       "secondaryAction": "阅读使用教程",
       "featuredTitle": "精选软件",
-      "featuredText": "先放 3 个常用工具，后续可以继续添加。",
+      "featuredText": "先放常用工具，后续可以继续添加。",
       "allSoftwareButton": "全部软件",
-      "qrImage": "",
-      "qrText": "",
+      "qrImage": "assets/images/index-qr-20260802164322-vvl02.jpg",
+      "qrText": "有任何问题添加我的QQ",
       "infoCards": [
         {
           "title": "一行一个产品",
@@ -84,8 +84,8 @@
       "eyebrow": "关于我",
       "heading": "关于 AI分享",
       "lead": "AI分享是一个个人知识分享和软件资源整理平台，用来记录我觉得实用的 AI 工具、办公软件、使用教程和下载说明。",
-      "qrImage": "",
-      "qrText": "",
+      "qrImage": "assets/images/about-qr-20260802164325-pgax0.jpg",
+      "qrText": "觉得很赞，打赏我!",
       "cards": [
         {
           "title": "网站定位",
