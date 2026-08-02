@@ -267,7 +267,10 @@ function applyContent() {
     box.innerHTML = renderArticles(siteContent.pages?.tutorials?.articles);
   });
   document.querySelectorAll('[data-qr-block]').forEach(box => {
-    box.innerHTML = renderQrBlock(siteContent.pages?.[box.dataset.qrBlock]);
+    const qrHtml = renderQrBlock(siteContent.pages?.[box.dataset.qrBlock]);
+    box.innerHTML = qrHtml;
+    const heroCard = box.closest('.hero-card');
+    if (heroCard) heroCard.classList.toggle('has-qr', Boolean(qrHtml));
   });
 }
 

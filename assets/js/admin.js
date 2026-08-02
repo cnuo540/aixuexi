@@ -4,6 +4,8 @@ const GITHUB_SETTINGS_KEY = 'ai-share-site-github-settings';
 const GITHUB_TOKEN_KEY = 'ai-share-site-github-token';
 const AUTH_KEY = 'ai-share-site-admin-auth';
 const ADMIN_PASSWORD = 'aifenxiang';
+const IMAGE_UPLOAD_DIR = 'assets/images';
+const pendingImageUploads = new Map();
 
 const SAMPLE_PRODUCTS = [
   {
@@ -609,6 +611,60 @@ function readImageFile(file, onLoad) {
   reader.readAsDataURL(file);
 }
 
+function imageExtensionFromFile(file) {
+  const byType = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+    'image/svg+xml': 'svg'
+  };
+  const ext = byType[file?.type] || String(file?.name || '').split('.').pop() || 'png';
+  return ext.toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+}
+
+function safeImagePrefix(value) {
+  return String(value || 'image')
+    .toLowerCase()
+    .replace(/\.[a-z0-9]+$/i, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48) || 'image';
+}
+
+function imageUploadPath(file, prefix) {
+  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14);
+  const random = Math.random().toString(36).slice(2, 7);
+  const name = safeImagePrefix(prefix || file?.name);
+  return `${IMAGE_UPLOAD_DIR}/${name}-${stamp}-${random}.${imageExtensionFromFile(file)}`;
+}
+
+function queueImageDataUrl(file, dataUrl, prefix) {
+  const path = imageUploadPath(file, prefix);
+  pendingImageUploads.set(path, { dataUrl, name: file?.name || path });
+  return path;
+}
+
+function productImagePrefix(product, kind) {
+  return `${safeImagePrefix(product?.id || product?.name || 'product')}-${safeImagePrefix(kind)}`;
+}
+
+function contentImagePrefix(path) {
+  return safeImagePrefix(path.replace(/^pages\./, '').replace(/\./g, '-'));
+}
+
+function isDataImage(value) {
+  return typeof value === 'string' && value.startsWith('data:image/');
+}
+
+function dataUrlBase64(dataUrl) {
+  return String(dataUrl || '').split(',')[1] || '';
+}
+
+function dataUrlMime(dataUrl) {
+  return String(dataUrl || '').match(/^data:([^;]+);base64,/)?.[1] || 'image/png';
+}
+
 function downloadJson() {
   const json = `${JSON.stringify(products.map(normalizeProduct), null, 2)}\n`;
   const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
@@ -747,6 +803,81 @@ async function putGithubFile(config, path, text, message) {
   });
 }
 
+async function putGithubBase64File(config, path, base64Content, message) {
+  let sha = '';
+  try {
+    const current = await getGithubFile(config, path);
+    sha = current.sha || '';
+  } catch (error) {
+    if (!String(error.message).includes('Not Found')) throw error;
+  }
+  return githubRequest(config, path, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message,
+      content: base64Content,
+      branch: config.branch,
+      ...(sha ? { sha } : {})
+    })
+  });
+}
+
+async function uploadQueuedImages(config) {
+  let count = 0;
+  for (const [path, upload] of pendingImageUploads.entries()) {
+    const repoPath = joinRepoPath(config.basePath, path);
+    await putGithubBase64File(config, repoPath, dataUrlBase64(upload.dataUrl), `${config.message} - ${path}`);
+    pendingImageUploads.delete(path);
+    count += 1;
+  }
+  return count;
+}
+
+async function convertDataUrlImage(config, dataUrl, prefix, cache) {
+  if (!isDataImage(dataUrl)) return dataUrl;
+  if (cache.has(dataUrl)) return cache.get(dataUrl);
+  const mime = dataUrlMime(dataUrl);
+  const ext = imageExtensionFromFile({ type: mime, name: `${prefix}.png` });
+  const fakeFile = { type: mime, name: `${safeImagePrefix(prefix)}.${ext}` };
+  const path = imageUploadPath(fakeFile, prefix);
+  await putGithubBase64File(config, joinRepoPath(config.basePath, path), dataUrlBase64(dataUrl), `${config.message} - ${path}`);
+  cache.set(dataUrl, path);
+  return path;
+}
+
+async function convertDataUrlImages(config) {
+  const cache = new Map();
+  let count = 0;
+  for (const product of products) {
+    const prefix = productImagePrefix(product, 'image');
+    if (isDataImage(product.icon)) {
+      product.icon = await convertDataUrlImage(config, product.icon, `${prefix}-icon`, cache);
+      count += 1;
+    }
+    if (isDataImage(product.preview)) {
+      product.preview = await convertDataUrlImage(config, product.preview, `${prefix}-preview`, cache);
+      count += 1;
+    }
+    if (Array.isArray(product.previewImages)) {
+      for (let i = 0; i < product.previewImages.length; i += 1) {
+        if (isDataImage(product.previewImages[i])) {
+          product.previewImages[i] = await convertDataUrlImage(config, product.previewImages[i], `${prefix}-preview-${i + 1}`, cache);
+          count += 1;
+        }
+      }
+      product.preview = product.previewImages[0] || product.preview || '';
+    }
+  }
+  for (const key of ['index', 'about']) {
+    const page = siteContent.pages?.[key];
+    if (isDataImage(page?.qrImage)) {
+      page.qrImage = await convertDataUrlImage(config, page.qrImage, `${key}-qr`, cache);
+      count += 1;
+    }
+  }
+  return count;
+}
+
 async function testGithubConnection() {
   const config = ensureGithubConfig();
   setGithubStatus('正在测试 GitHub 连接...', 'warn');
@@ -757,14 +888,18 @@ async function testGithubConnection() {
 
 async function pushToGithub() {
   const config = ensureGithubConfig();
-  setGithubStatus('正在保存到 GitHub，请稍等...', 'warn');
+  setGithubStatus('\u6b63\u5728\u4e0a\u4f20\u56fe\u7247\u5e76\u4fdd\u5b58\u5230 GitHub\uff0c\u8bf7\u7a0d\u7b49...', 'warn');
   const productsPath = joinRepoPath(config.basePath, 'data/products.json');
   const contentPath = joinRepoPath(config.basePath, 'data/content.json');
+  const convertedCount = await convertDataUrlImages(config);
+  const uploadedCount = await uploadQueuedImages(config);
   await putGithubFile(config, productsPath, productsJsonText(), `${config.message} - products.json`);
   await putGithubFile(config, contentPath, contentJsonText(), `${config.message} - content.json`);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(products.map(normalizeProduct)));
   localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(normalizeContent(siteContent)));
-  setGithubStatus('已保存到 GitHub。GitHub Pages 通常会在几十秒到几分钟内更新。', 'ok');
+  const imageCount = convertedCount + uploadedCount;
+  const imageText = imageCount ? `\uff0c\u5e76\u5df2\u4e0a\u4f20 ${imageCount} \u4e2a\u56fe\u7247\u6587\u4ef6` : '';
+  setGithubStatus(`\u5df2\u4fdd\u5b58\u5230 GitHub${imageText}\u3002GitHub Pages \u901a\u5e38\u4f1a\u5728\u51e0\u5341\u79d2\u5230\u51e0\u5206\u949f\u5185\u66f4\u65b0\u3002`, 'ok');
 }
 
 function saveDraft() {
@@ -858,9 +993,10 @@ function setupActions() {
       const file = input.files[0];
       const path = input.dataset.contentImageKey;
       readImageFile(file, dataUrl => {
-        setContentPath(path, dataUrl);
+        const uploadPath = queueImageDataUrl(file, dataUrl, contentImagePrefix(path));
+        setContentPath(path, uploadPath);
         renderContentEditor();
-        setStatus('二维码图片已更新。', 'ok');
+        setStatus('\u4e8c\u7ef4\u7801\u56fe\u7247\u5df2\u52a0\u5165\u4e0a\u4f20\u961f\u5217\uff0c\u4fdd\u5b58\u5230 GitHub \u540e\u4f1a\u751f\u6210\u72ec\u7acb\u56fe\u7247\u6587\u4ef6\u3002', 'ok');
       });
       input.value = '';
       return;
@@ -871,10 +1007,11 @@ function setupActions() {
       if (!products[index]) return;
       readImageFile(file, dataUrl => {
         products[index].previewImages = products[index].previewImages || [];
-        products[index].previewImages.push(dataUrl);
+        const uploadPath = queueImageDataUrl(file, dataUrl, productImagePrefix(products[index], `preview-${products[index].previewImages.length + 1}`));
+        products[index].previewImages.push(uploadPath);
         products[index].preview = products[index].previewImages[0] || '';
         renderEditor();
-        setStatus('已添加一张界面图片。', 'ok');
+        setStatus('\u5df2\u6dfb\u52a0\u4e00\u5f20\u754c\u9762\u56fe\u7247\uff0c\u4fdd\u5b58\u5230 GitHub \u540e\u4f1a\u751f\u6210\u72ec\u7acb\u56fe\u7247\u6587\u4ef6\u3002', 'ok');
       });
       input.value = '';
       return;
@@ -885,9 +1022,10 @@ function setupActions() {
     const key = input.dataset.imageKey;
     if (!file || !products[index] || !key) return;
     readImageFile(file, dataUrl => {
-      products[index][key] = dataUrl;
+      const uploadPath = queueImageDataUrl(file, dataUrl, productImagePrefix(products[index], key));
+      products[index][key] = uploadPath;
       renderEditor();
-      setStatus(`${key === 'icon' ? '软件图标' : '界面图片'}已更新。导出时会写入 products.json。`, 'ok');
+      setStatus(`${key === 'icon' ? '\u8f6f\u4ef6\u56fe\u6807' : '\u754c\u9762\u56fe\u7247'}\u5df2\u52a0\u5165\u4e0a\u4f20\u961f\u5217\uff0c\u4fdd\u5b58\u5230 GitHub \u540e\u4f1a\u751f\u6210\u72ec\u7acb\u56fe\u7247\u6587\u4ef6\u3002`, 'ok');
     });
     input.value = '';
   });
