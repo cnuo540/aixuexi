@@ -1,30 +1,32 @@
 [
   {
-    "id": "writer",
-    "name": "智能写作助手",
-    "tag": "文案 / 摘要 / 改写",
-    "version": "v2.1",
-    "icon": "assets/img/icons/writer.svg",
-    "preview": "assets/img/previews/writer.svg",
+    "id": "01",
+    "name": "仓库管理系统",
+    "tag": "仓库 /微盘 / ERP",
+    "version": "v4.5",
+    "icon": "assets/images/01-image-icon-20260802164309-pmg13.png",
+    "preview": "assets/images/01-image-preview-20260802164311-lwzwb.png",
     "previewImages": [
-      "assets/img/previews/writer.svg"
+      "assets/images/01-image-preview-20260802164311-lwzwb.png",
+      "assets/images/01-image-preview-2-20260802164315-lgrgw.png",
+      "assets/images/01-image-preview-3-20260802164319-hg92m.png"
     ],
-    "desc": "适合日常写作、文章摘要、标题生成和内容润色。",
+    "desc": "1.下载密码：ai123",
     "steps": [
-      "下载并解压软件包",
-      "按照教程填写基础配置",
-      "打开软件即可开始生成内容"
+      "输入密码下载软件包",
+      "按照抖音教程填安装使用",
+      "后续优化建议QQ联系"
     ],
     "password": "ai123",
-    "url": "https://example.com/download/ai-writer",
+    "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABY4WXynH2",
     "links": [
       {
-        "label": "下载链接 1",
-        "url": "https://example.com/download/ai-writer"
+        "label": "下载微盘地址：",
+        "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABY4WXynH2"
       },
       {
-        "label": "备用链接",
-        "url": ""
+        "label": "抖音教程地址：",
+        "url": "https://example.com/download/ai-writer"
       }
     ]
   },
