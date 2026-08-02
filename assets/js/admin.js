@@ -2,6 +2,7 @@ const STORAGE_KEY = 'ai-share-site-products-draft';
 const CONTENT_STORAGE_KEY = 'ai-share-site-content-draft';
 const GITHUB_SETTINGS_KEY = 'ai-share-site-github-settings';
 const GITHUB_TOKEN_KEY = 'ai-share-site-github-token';
+const GITHUB_REMEMBER_TOKEN_KEY = 'ai-share-site-github-remember-token';
 const AUTH_KEY = 'ai-share-site-admin-auth';
 const ADMIN_PASSWORD = 'aifenxiang';
 const IMAGE_UPLOAD_DIR = 'assets/images';
@@ -720,31 +721,43 @@ function joinRepoPath(basePath, filePath) {
 }
 
 function githubFields() {
+  const rememberedToken = localStorage.getItem(GITHUB_TOKEN_KEY) || '';
   return {
     owner: document.querySelector('#github-owner')?.value.trim() || '',
     repo: document.querySelector('#github-repo')?.value.trim() || '',
     branch: document.querySelector('#github-branch')?.value.trim() || 'main',
     basePath: document.querySelector('#github-base-path')?.value.trim() || '',
-    token: document.querySelector('#github-token')?.value.trim() || sessionStorage.getItem(GITHUB_TOKEN_KEY) || '',
+    rememberToken: document.querySelector('#github-remember-token')?.checked || false,
+    token: document.querySelector('#github-token')?.value.trim() || sessionStorage.getItem(GITHUB_TOKEN_KEY) || rememberedToken,
     message: document.querySelector('#github-commit-message')?.value.trim() || '更新网站内容'
   };
 }
 
 function saveGithubSettings() {
-  const { owner, repo, branch, basePath, message, token } = githubFields();
+  const { owner, repo, branch, basePath, message, token, rememberToken } = githubFields();
   localStorage.setItem(GITHUB_SETTINGS_KEY, JSON.stringify({ owner, repo, branch, basePath, message }));
-  if (token) sessionStorage.setItem(GITHUB_TOKEN_KEY, token);
+  localStorage.setItem(GITHUB_REMEMBER_TOKEN_KEY, rememberToken ? '1' : '');
+  if (token) {
+    sessionStorage.setItem(GITHUB_TOKEN_KEY, token);
+    if (rememberToken) {
+      localStorage.setItem(GITHUB_TOKEN_KEY, token);
+    } else {
+      localStorage.removeItem(GITHUB_TOKEN_KEY);
+    }
+  }
 }
 
 function loadGithubSettings() {
   const saved = JSON.parse(localStorage.getItem(GITHUB_SETTINGS_KEY) || '{}');
-  const token = sessionStorage.getItem(GITHUB_TOKEN_KEY) || '';
+  const rememberToken = localStorage.getItem(GITHUB_REMEMBER_TOKEN_KEY) === '1';
+  const token = sessionStorage.getItem(GITHUB_TOKEN_KEY) || (rememberToken ? localStorage.getItem(GITHUB_TOKEN_KEY) || '' : '');
   document.querySelector('#github-owner').value = saved.owner || 'cnuo540';
   document.querySelector('#github-repo').value = saved.repo || '';
   document.querySelector('#github-branch').value = saved.branch || 'main';
   document.querySelector('#github-base-path').value = saved.basePath || '';
   document.querySelector('#github-commit-message').value = saved.message || '更新网站内容';
   document.querySelector('#github-token').value = token;
+  document.querySelector('#github-remember-token').checked = rememberToken;
 }
 
 function ensureGithubConfig() {
@@ -966,7 +979,7 @@ function setupActions() {
         products[index].url = products[index].links[0]?.url || '';
       }
     }
-    if (event.target.matches('#github-owner, #github-repo, #github-branch, #github-base-path, #github-commit-message, #github-token')) {
+    if (event.target.matches('#github-owner, #github-repo, #github-branch, #github-base-path, #github-commit-message, #github-token, #github-remember-token')) {
       saveGithubSettings();
     }
     if (event.target.matches('[data-content-key]')) {
@@ -1059,8 +1072,11 @@ function setupActions() {
     }
     if (action === 'clear-github-token') {
       sessionStorage.removeItem(GITHUB_TOKEN_KEY);
+      localStorage.removeItem(GITHUB_TOKEN_KEY);
+      localStorage.removeItem(GITHUB_REMEMBER_TOKEN_KEY);
       document.querySelector('#github-token').value = '';
-      setGithubStatus('Token 已清除。', 'ok');
+      document.querySelector('#github-remember-token').checked = false;
+      setGithubStatus('Token \u5df2\u6e05\u9664\u3002', 'ok');
     }
     if (action === 'reload') {
       localStorage.removeItem(STORAGE_KEY);
