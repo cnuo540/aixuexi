@@ -88,6 +88,8 @@ const SAMPLE_CONTENT = {
       featuredTitle: '精选软件',
       featuredText: '先放 3 个常用工具，后续可以继续添加。',
       allSoftwareButton: '全部软件',
+      qrImage: '',
+      qrText: '',
       infoCards: [
         { title: '一行一个产品', text: '图标、界面预览、使用说明、下载入口都放在同一行，查找更直观。' },
         { title: '密码查看链接', text: '输入对应密码后，页面才会显示下载链接，适合简单分享。' },
@@ -134,6 +136,8 @@ const SAMPLE_CONTENT = {
       eyebrow: '关于我',
       heading: '关于 AI分享',
       lead: 'AI分享是一个个人知识分享和软件资源整理平台，用来记录我觉得实用的 AI 工具、办公软件、使用教程和下载说明。',
+      qrImage: '',
+      qrText: '',
       cards: [
         { title: '网站定位', text: '分享个人常用软件、使用经验和教程文档。' },
         { title: '内容形式', text: '以软件列表和教程文章为主，保持页面简单清晰。' },
@@ -181,17 +185,29 @@ function escapeHtml(str) {
 
 function normalizeProduct(item, index) {
   const steps = Array.isArray(item.steps) ? item.steps : String(item.steps || '').split('\n').map(s => s.trim()).filter(Boolean);
+  const previewImages = Array.isArray(item.previewImages) && item.previewImages.length
+    ? item.previewImages.filter(Boolean)
+    : [item.preview].filter(Boolean);
+  const links = Array.isArray(item.links) && item.links.length
+    ? item.links.slice(0, 2).map((link, linkIndex) => ({
+        label: link.label || `下载链接 ${linkIndex + 1}`,
+        url: link.url || ''
+      }))
+    : [{ label: '下载链接 1', url: item.url || '' }, { label: '备用链接', url: '' }];
+  while (links.length < 2) links.push({ label: links.length === 0 ? '下载链接 1' : '备用链接', url: '' });
   return {
     id: item.id || `product-${index + 1}`,
     name: item.name || '',
     tag: item.tag || '',
     version: item.version || '',
     icon: item.icon || '',
-    preview: item.preview || '',
+    preview: item.preview || previewImages[0] || '',
+    previewImages,
     desc: item.desc || '',
     steps,
     password: item.password || '',
-    url: item.url || ''
+    url: item.url || links[0]?.url || '',
+    links
   };
 }
 
@@ -204,10 +220,15 @@ function makeEmptyProduct() {
     version: 'v1.0',
     icon: 'assets/img/icons/writer.svg',
     preview: 'assets/img/previews/writer.svg',
+    previewImages: ['assets/img/previews/writer.svg'],
     desc: '',
     steps: ['第一步', '第二步', '第三步'],
     password: '',
-    url: ''
+    url: '',
+    links: [
+      { label: '下载链接 1', url: '' },
+      { label: '备用链接', url: '' }
+    ]
   };
 }
 
@@ -328,6 +349,27 @@ function contentInput(label, path, rows = 1) {
     </label>`;
 }
 
+function contentImageField(label, path) {
+  const value = getContentPath(path) || '';
+  return `
+    <div class="admin-image-field">
+      <div class="admin-image-preview-wrap">
+        ${value ? `<img class="admin-image-preview" src="${escapeHtml(value)}" alt="${escapeHtml(label)}预览">` : '<div class="empty">暂无图片</div>'}
+      </div>
+      <div class="admin-image-controls">
+        <label class="admin-field">
+          <span>${label}路径</span>
+          <input type="text" value="${escapeHtml(value)}" data-content-key="${path}">
+        </label>
+        <label class="admin-file-button">
+          <span>选择本地图片</span>
+          <input type="file" accept="image/*" data-content-image-key="${path}">
+        </label>
+        <button class="admin-small-button" type="button" data-action="clear-content-image" data-content-image-key="${path}">清除图片</button>
+      </div>
+    </div>`;
+}
+
 function contentList(label, path, items) {
   const rows = (items || []).map((item, index) => `
     <div class="admin-list-row">
@@ -382,6 +424,8 @@ function renderContentEditor() {
       ${contentInput('精选区标题', 'pages.index.featuredTitle')}
       ${contentInput('精选区说明', 'pages.index.featuredText')}
       ${contentInput('全部软件按钮', 'pages.index.allSoftwareButton')}
+      ${contentImageField('首页二维码图片', 'pages.index.qrImage')}
+      ${contentInput('二维码下方文字', 'pages.index.qrText', 2)}
       ${contentList('首页信息卡片', 'pages.index.infoCards', siteContent.pages.index.infoCards)}
     `),
     renderContentCard('AI软件内容编辑', `
@@ -419,6 +463,8 @@ function renderContentEditor() {
       ${contentInput('眉标', 'pages.about.eyebrow')}
       ${contentInput('主标题', 'pages.about.heading')}
       ${contentInput('主说明', 'pages.about.lead', 3)}
+      ${contentImageField('关于我二维码图片', 'pages.about.qrImage')}
+      ${contentInput('二维码下方文字', 'pages.about.qrText', 2)}
       ${contentList('关于页卡片', 'pages.about.cards', siteContent.pages.about.cards)}
     `)
   ].join('');
@@ -452,6 +498,48 @@ function imageField(label, index, key, value) {
     </div>`;
 }
 
+function previewImagesField(index, images) {
+  const rows = (images || []).map((src, imageIndex) => `
+    <div class="admin-list-row preview-row">
+      <div class="admin-image-preview-wrap">
+        <img class="admin-image-preview" src="${escapeHtml(src)}" alt="界面图片 ${imageIndex + 1}">
+      </div>
+      <label class="admin-field">
+        <span>界面图片 ${imageIndex + 1}</span>
+        <input type="text" value="${escapeHtml(src)}" data-index="${index}" data-preview-index="${imageIndex}" data-preview-key="src">
+      </label>
+      <button class="admin-small-button" type="button" data-action="delete-preview-image" data-index="${index}" data-preview-index="${imageIndex}">删除</button>
+    </div>
+  `).join('');
+  return `
+    <div class="admin-field full">
+      <span>界面图片组</span>
+      <div class="admin-list-editor">${rows || '<div class="empty">暂无界面图片。</div>'}</div>
+      <label class="admin-file-button add-row">
+        <span>添加界面图片</span>
+        <input type="file" accept="image/*" data-index="${index}" data-preview-upload="true">
+      </label>
+    </div>`;
+}
+
+function linksField(index, links) {
+  const safeLinks = (links || []).slice(0, 2);
+  while (safeLinks.length < 2) safeLinks.push({ label: safeLinks.length === 0 ? '下载链接 1' : '备用链接', url: '' });
+  return safeLinks.map((link, linkIndex) => `
+    <div class="admin-list-row link-row">
+      <label class="admin-field">
+        <span>链接 ${linkIndex + 1} 名称</span>
+        <input type="text" value="${escapeHtml(link.label || '')}" data-index="${index}" data-link-index="${linkIndex}" data-link-key="label">
+      </label>
+      <label class="admin-field">
+        <span>链接 ${linkIndex + 1} 地址</span>
+        <input type="url" value="${escapeHtml(link.url || '')}" data-index="${index}" data-link-index="${linkIndex}" data-link-key="url">
+      </label>
+      <button class="admin-small-button" type="button" data-action="clear-download-link" data-index="${index}" data-link-index="${linkIndex}">清空</button>
+    </div>
+  `).join('');
+}
+
 function renderCard(product, index) {
   return `
     <article class="admin-card">
@@ -473,9 +561,12 @@ function renderCard(product, index) {
         ${field('分类标签', index, 'tag', product.tag)}
         ${field('版本号', index, 'version', product.version)}
         ${imageField('软件图标', index, 'icon', product.icon)}
-        ${imageField('界面图片', index, 'preview', product.preview)}
+        ${previewImagesField(index, product.previewImages)}
         ${field('下载密码', index, 'password', product.password)}
-        ${field('下载链接', index, 'url', product.url, 'url')}
+        <div class="admin-field full">
+          <span>下载链接</span>
+          <div class="admin-list-editor">${linksField(index, product.links)}</div>
+        </div>
         <label class="admin-field full">
           <span>软件说明</span>
           <textarea rows="3" data-index="${index}" data-key="desc">${escapeHtml(product.desc)}</textarea>
@@ -501,6 +592,21 @@ function collectFromInput(input) {
   products[index][key] = key === 'steps'
     ? input.value.split('\n').map(s => s.trim()).filter(Boolean)
     : input.value.trim();
+}
+
+function readImageFile(file, onLoad) {
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    setStatus('请选择图片文件。', 'error');
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    setStatus('图片不能超过 5 MB，请先压缩后再上传。', 'error');
+    return;
+  }
+  const reader = new FileReader();
+  reader.addEventListener('load', () => onLoad(reader.result));
+  reader.readAsDataURL(file);
 }
 
 function downloadJson() {
@@ -708,6 +814,23 @@ function setupActions() {
 
   document.addEventListener('input', event => {
     if (event.target.matches('[data-key]')) collectFromInput(event.target);
+    if (event.target.matches('[data-preview-key]')) {
+      const index = Number(event.target.dataset.index);
+      const imageIndex = Number(event.target.dataset.previewIndex);
+      if (products[index]?.previewImages?.[imageIndex] !== undefined) {
+        products[index].previewImages[imageIndex] = event.target.value.trim();
+        products[index].preview = products[index].previewImages[0] || '';
+      }
+    }
+    if (event.target.matches('[data-link-key]')) {
+      const index = Number(event.target.dataset.index);
+      const linkIndex = Number(event.target.dataset.linkIndex);
+      const key = event.target.dataset.linkKey;
+      if (products[index]?.links?.[linkIndex] && key) {
+        products[index].links[linkIndex][key] = event.target.value.trim();
+        products[index].url = products[index].links[0]?.url || '';
+      }
+    }
     if (event.target.matches('#github-owner, #github-repo, #github-branch, #github-base-path, #github-commit-message, #github-token')) {
       saveGithubSettings();
     }
@@ -731,27 +854,42 @@ function setupActions() {
       renderEditor();
       return;
     }
+    if (input.matches('[data-content-image-key]')) {
+      const file = input.files[0];
+      const path = input.dataset.contentImageKey;
+      readImageFile(file, dataUrl => {
+        setContentPath(path, dataUrl);
+        renderContentEditor();
+        setStatus('二维码图片已更新。', 'ok');
+      });
+      input.value = '';
+      return;
+    }
+    if (input.matches('[data-preview-upload]')) {
+      const file = input.files[0];
+      const index = Number(input.dataset.index);
+      if (!products[index]) return;
+      readImageFile(file, dataUrl => {
+        products[index].previewImages = products[index].previewImages || [];
+        products[index].previewImages.push(dataUrl);
+        products[index].preview = products[index].previewImages[0] || '';
+        renderEditor();
+        setStatus('已添加一张界面图片。', 'ok');
+      });
+      input.value = '';
+      return;
+    }
     if (!input.matches('[data-image-key]')) return;
     const file = input.files[0];
     const index = Number(input.dataset.index);
     const key = input.dataset.imageKey;
     if (!file || !products[index] || !key) return;
-    if (!file.type.startsWith('image/')) {
-      setStatus('请选择图片文件。', 'error');
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      setStatus('图片不能超过 5 MB，请先压缩后再上传。', 'error');
-      input.value = '';
-      return;
-    }
-    const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      products[index][key] = reader.result;
+    readImageFile(file, dataUrl => {
+      products[index][key] = dataUrl;
       renderEditor();
       setStatus(`${key === 'icon' ? '软件图标' : '界面图片'}已更新。导出时会写入 products.json。`, 'ok');
     });
-    reader.readAsDataURL(file);
+    input.value = '';
   });
 
   document.addEventListener('click', async event => {
@@ -817,6 +955,28 @@ function setupActions() {
       products[index][key] = '';
       renderEditor();
       setStatus(`${key === 'icon' ? '软件图标' : '界面图片'}已清除。`, 'ok');
+    }
+    if (action === 'delete-preview-image' && Number.isInteger(index)) {
+      const imageIndex = Number(event.target.dataset.previewIndex);
+      products[index].previewImages.splice(imageIndex, 1);
+      products[index].preview = products[index].previewImages[0] || '';
+      renderEditor();
+      setStatus('已删除界面图片。', 'ok');
+    }
+    if (action === 'clear-download-link' && Number.isInteger(index)) {
+      const linkIndex = Number(event.target.dataset.linkIndex);
+      if (products[index].links?.[linkIndex]) {
+        products[index].links[linkIndex] = { label: linkIndex === 0 ? '下载链接 1' : '备用链接', url: '' };
+        products[index].url = products[index].links[0]?.url || '';
+        renderEditor();
+        setStatus('已清空下载链接。', 'ok');
+      }
+    }
+    if (action === 'clear-content-image') {
+      const path = event.target.dataset.contentImageKey;
+      setContentPath(path, '');
+      renderContentEditor();
+      setStatus('二维码图片已清除。', 'ok');
     }
     if (action === 'add-content-item') {
       const path = event.target.dataset.listPath;

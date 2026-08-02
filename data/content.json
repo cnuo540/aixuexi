@@ -15,6 +15,8 @@
       "featuredTitle": "精选软件",
       "featuredText": "先放 3 个常用工具，后续可以继续添加。",
       "allSoftwareButton": "全部软件",
+      "qrImage": "",
+      "qrText": "",
       "infoCards": [
         {
           "title": "一行一个产品",
@@ -82,6 +84,8 @@
       "eyebrow": "关于我",
       "heading": "关于 AI分享",
       "lead": "AI分享是一个个人知识分享和软件资源整理平台，用来记录我觉得实用的 AI 工具、办公软件、使用教程和下载说明。",
+      "qrImage": "",
+      "qrText": "",
       "cards": [
         {
           "title": "网站定位",

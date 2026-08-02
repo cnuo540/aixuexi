@@ -80,6 +80,8 @@ const DEFAULT_CONTENT = {
       featuredTitle: '精选软件',
       featuredText: '先放 3 个常用工具，后续可以继续添加。',
       allSoftwareButton: '全部软件',
+      qrImage: '',
+      qrText: '',
       infoCards: [
         { title: '一行一个产品', text: '图标、界面预览、使用说明、下载入口都放在同一行，查找更直观。' },
         { title: '密码查看链接', text: '输入对应密码后，页面才会显示下载链接，适合简单分享。' },
@@ -126,6 +128,8 @@ const DEFAULT_CONTENT = {
       eyebrow: '关于我',
       heading: '关于 AI分享',
       lead: 'AI分享是一个个人知识分享和软件资源整理平台，用来记录我觉得实用的 AI 工具、办公软件、使用教程和下载说明。',
+      qrImage: '',
+      qrText: '',
       cards: [
         { title: '网站定位', text: '分享个人常用软件、使用经验和教程文档。' },
         { title: '内容形式', text: '以软件列表和教程文章为主，保持页面简单清晰。' },
@@ -143,6 +147,15 @@ function escapeHtml(str) {
 
 function normalizeProduct(item, index) {
   const steps = Array.isArray(item.steps) ? item.steps : String(item.steps || '').split('\n').map(s => s.trim()).filter(Boolean);
+  const previewImages = Array.isArray(item.previewImages) && item.previewImages.length
+    ? item.previewImages.filter(Boolean)
+    : [item.preview].filter(Boolean);
+  const links = Array.isArray(item.links) && item.links.length
+    ? item.links.map((link, linkIndex) => ({
+        label: link.label || `下载链接 ${linkIndex + 1}`,
+        url: link.url || ''
+      })).filter(link => link.url)
+    : [{ label: '下载链接 1', url: item.url || '' }].filter(link => link.url);
   return {
     id: item.id || `product-${index + 1}`,
     name: item.name || '',
@@ -150,10 +163,12 @@ function normalizeProduct(item, index) {
     version: item.version || '',
     icon: item.icon || '',
     preview: item.preview || '',
+    previewImages,
     desc: item.desc || '',
     steps,
     password: item.password || '',
-    url: item.url || ''
+    url: item.url || '',
+    links
   };
 }
 
@@ -220,6 +235,15 @@ function renderArticles(items) {
   `).join('');
 }
 
+function renderQrBlock(page) {
+  if (!page?.qrImage && !page?.qrText) return '';
+  return `
+    <div class="qr-card">
+      ${page.qrImage ? `<img class="qr-img" src="${escapeHtml(page.qrImage)}" alt="二维码">` : ''}
+      ${page.qrText ? `<p>${escapeHtml(page.qrText)}</p>` : ''}
+    </div>`;
+}
+
 function applyContent() {
   const key = pageKey();
   const page = siteContent.pages?.[key];
@@ -242,10 +266,17 @@ function applyContent() {
   document.querySelectorAll('[data-articles]').forEach(box => {
     box.innerHTML = renderArticles(siteContent.pages?.tutorials?.articles);
   });
+  document.querySelectorAll('[data-qr-block]').forEach(box => {
+    box.innerHTML = renderQrBlock(siteContent.pages?.[box.dataset.qrBlock]);
+  });
 }
 
 function productCard(product) {
   const steps = (product.steps || []).map(step => `<li>${escapeHtml(step)}</li>`).join('');
+  const images = product.previewImages?.length ? product.previewImages : [product.preview].filter(Boolean);
+  const imageSlides = images.map((src, index) => `
+    <img class="preview-img ${index === 0 ? 'active' : ''}" src="${escapeHtml(src)}" alt="${escapeHtml(product.name)} 软件界面图 ${index + 1}" data-preview-index="${index}">
+  `).join('');
   return `
     <article class="product-card" id="${escapeHtml(product.id)}">
       <div class="product-meta">
@@ -256,8 +287,13 @@ function productCard(product) {
           <div class="version">${escapeHtml(product.version)}</div>
         </div>
       </div>
-      <div class="preview-wrap">
-        <img class="preview-img" src="${escapeHtml(product.preview)}" alt="${escapeHtml(product.name)} 软件界面图">
+      <div class="preview-wrap" data-product-id="${escapeHtml(product.id)}" data-current-preview="0">
+        <div class="preview-carousel">
+          <button class="preview-nav prev" type="button" data-action="preview-prev" aria-label="上一张">‹</button>
+          <div class="preview-stage" data-action="preview-zoom">${imageSlides || '<div class="empty">暂无界面图片。</div>'}</div>
+          <button class="preview-nav next" type="button" data-action="preview-next" aria-label="下一张">›</button>
+        </div>
+        <div class="preview-dots">${images.map((_, index) => `<span class="${index === 0 ? 'active' : ''}"></span>`).join('')}</div>
       </div>
       <div class="instructions">
         <h4>使用说明</h4>
@@ -313,7 +349,12 @@ function setupDownloadUnlock() {
     const value = (input.value || '').trim();
     if (!product) return;
     if (value === product.password) {
-      result.innerHTML = `<span class="success">验证成功：<a href="${escapeHtml(product.url)}" target="_blank" rel="noopener">点击下载 ${escapeHtml(product.name)}</a></span>`;
+      const links = (product.links || []).slice(0, 2);
+      result.innerHTML = `
+        <span class="success">验证成功：</span>
+        <div class="download-links">
+          ${links.map((link, index) => `<a href="${escapeHtml(link.url)}" target="_blank" rel="noopener">${escapeHtml(link.label || `下载链接 ${index + 1}`)}</a>`).join('')}
+        </div>`;
       input.setAttribute('aria-invalid', 'false');
     } else {
       result.innerHTML = '<span class="error">密码不正确，请重新输入。</span>';
@@ -326,6 +367,58 @@ function setupDownloadUnlock() {
       event.preventDefault();
       event.target.closest('.download-box').querySelector('[data-action="unlock"]').click();
     }
+  });
+}
+
+function updatePreview(wrap, nextIndex) {
+  const slides = Array.from(wrap.querySelectorAll('.preview-img'));
+  if (!slides.length) return;
+  const safeIndex = (nextIndex + slides.length) % slides.length;
+  wrap.dataset.currentPreview = String(safeIndex);
+  slides.forEach((img, index) => img.classList.toggle('active', index === safeIndex));
+  wrap.querySelectorAll('.preview-dots span').forEach((dot, index) => dot.classList.toggle('active', index === safeIndex));
+}
+
+function setupPreviewActions() {
+  document.addEventListener('click', event => {
+    const action = event.target.closest('[data-action]')?.dataset.action;
+    if (!['preview-prev', 'preview-next'].includes(action)) return;
+    const wrap = event.target.closest('.preview-wrap');
+    const current = Number(wrap.dataset.currentPreview || 0);
+    updatePreview(wrap, current + (action === 'preview-next' ? 1 : -1));
+  });
+  document.addEventListener('dblclick', event => {
+    const stage = event.target.closest('[data-action="preview-zoom"]');
+    if (!stage) return;
+    const wrap = stage.closest('.preview-wrap');
+    const img = wrap.querySelector('.preview-img.active');
+    if (!img) return;
+    openImageViewer(img.src, img.alt || '软件界面图');
+  });
+}
+
+function openImageViewer(src, alt) {
+  let viewer = document.querySelector('[data-image-viewer]');
+  if (!viewer) {
+    viewer = document.createElement('div');
+    viewer.className = 'image-viewer';
+    viewer.dataset.imageViewer = 'true';
+    viewer.innerHTML = '<button type="button" data-action="viewer-close" aria-label="关闭">×</button><img alt="">';
+    document.body.appendChild(viewer);
+  }
+  viewer.querySelector('img').src = src;
+  viewer.querySelector('img').alt = alt;
+  viewer.classList.add('open');
+}
+
+function setupImageViewer() {
+  document.addEventListener('click', event => {
+    if (event.target.closest('[data-action="viewer-close"]') || event.target.matches('[data-image-viewer]')) {
+      document.querySelector('[data-image-viewer]')?.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') document.querySelector('[data-image-viewer]')?.classList.remove('open');
   });
 }
 
@@ -344,5 +437,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderProducts();
   setupProductSearch();
   setupDownloadUnlock();
+  setupPreviewActions();
+  setupImageViewer();
   markActiveNav();
 });
