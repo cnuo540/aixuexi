@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>网站管理 - AI分享</title>
+  <meta name="description" content="AI分享网站内容管理页面">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="admin-page">
+<header class="site-header">
+  <div class="container nav-shell">
+    <a class="logo" href="index.html"><span class="logo-mark">AI</span><span>AI分享</span></a>
+    <nav class="main-nav" aria-label="主导航">
+      <a href="index.html">首页</a>
+      <a href="software.html">AI软件</a>
+      <a href="tutorials.html">教程文档</a>
+      <a href="download.html">下载须知</a>
+      <a href="about.html">关于我</a>
+      <a class="admin-link" href="admin.html">网站管理</a>
+    </nav>
+  </div>
+</header>
+<main>
+<section class="admin-login" data-login-panel>
+  <div class="container">
+    <div class="admin-login-card">
+      <span class="eyebrow">受保护页面</span>
+      <h1>进入网站管理</h1>
+      <p>请输入管理密码后编辑网站内容。</p>
+      <form class="admin-login-form" data-login-form>
+        <label for="admin-password">管理密码</label>
+        <div class="download-form">
+          <input id="admin-password" type="password" autocomplete="current-password" placeholder="输入管理密码" required>
+          <button class="btn" type="submit">进入管理</button>
+        </div>
+      </form>
+      <div class="admin-status" data-login-status>尚未验证</div>
+    </div>
+  </div>
+</section>
+<div data-admin-content hidden>
+<section class="hero admin-hero">
+  <div class="container">
+    <div class="hero-card">
+      <span class="eyebrow">内容编辑</span>
+      <h1>网站管理</h1>
+      <p class="lead">编辑软件资料后导出新的 products.json，替换仓库里的 data/products.json 即可更新网站。</p>
+      <div class="hero-actions admin-actions">
+        <button class="btn" type="button" data-action="add">添加软件</button>
+        <button class="btn secondary" type="button" data-action="save-draft">保存草稿</button>
+        <button class="btn secondary" type="button" data-action="export">导出 products.json</button>
+        <button class="btn secondary" type="button" data-action="import">导入 JSON</button>
+        <button class="btn secondary" type="button" data-action="export-content">导出 content.json</button>
+        <button class="btn secondary" type="button" data-action="import-content">导入内容 JSON</button>
+        <button class="btn secondary" type="button" data-action="logout">退出管理</button>
+        <input class="sr-only" id="json-import" type="file" accept="application/json,.json">
+        <input class="sr-only" id="content-import" type="file" accept="application/json,.json">
+      </div>
+      <div class="admin-status" data-status>正在载入数据...</div>
+    </div>
+  </div>
+</section>
+<section class="section admin-github-section">
+  <div class="container">
+    <div class="admin-card github-card">
+      <div class="admin-card-head">
+        <div>
+          <span class="tag">自动发布</span>
+          <h2>保存到 GitHub</h2>
+        </div>
+      </div>
+      <p class="admin-help">填写部署网站的仓库信息后，可以直接提交软件资料、页面内容和新图片。</p>
+      <div class="admin-fields">
+        <label class="admin-field">
+          <span>GitHub 用户名或组织</span>
+          <input type="text" id="github-owner" placeholder="例如 cnuo540" autocomplete="off">
+        </label>
+        <label class="admin-field">
+          <span>仓库名称</span>
+          <input type="text" id="github-repo" placeholder="例如 ai-share-site" autocomplete="off">
+        </label>
+        <label class="admin-field">
+          <span>分支</span>
+          <input type="text" id="github-branch" placeholder="main" autocomplete="off">
+        </label>
+        <label class="admin-field">
+          <span>网站目录</span>
+          <input type="text" id="github-base-path" placeholder="留空表示仓库根目录" autocomplete="off">
+        </label>
+        <label class="admin-field full">
+          <span>Fine-grained Token</span>
+          <input type="password" id="github-token" placeholder="粘贴 GitHub Token" autocomplete="off">
+        </label>
+        <label class="admin-field full">
+          <span>提交说明</span>
+          <input type="text" id="github-commit-message" placeholder="更新网站内容" autocomplete="off">
+        </label>
+      </div>
+      <div class="github-actions">
+        <button class="btn secondary" type="button" data-action="test-github">测试连接</button>
+        <button class="btn" type="button" data-action="push-github">保存到 GitHub</button>
+        <button class="btn secondary" type="button" data-action="clear-github-token">清除 Token</button>
+      </div>
+      <div class="admin-status" data-github-status>Token 只保存在当前浏览器会话中。</div>
+    </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><h2>页面内容</h2><p>首页、AI软件、教程文档、下载须知、关于我</p></div>
+      <button class="btn secondary" type="button" data-action="reload-content">读取页面内容</button>
+    </div>
+    <div class="admin-list" data-content-editor></div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><h2>软件条目</h2><p><span data-count>0</span> 个软件</p></div>
+      <button class="btn secondary" type="button" data-action="reload">读取线上数据</button>
+    </div>
+    <div class="admin-list" data-editor></div>
+  </div>
+</section>
+</div>
+</main>
+<footer class="footer">
+  <div class="container">© 2026 AI分享 · 个人软件分享与知识记录平台</div>
+</footer>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>

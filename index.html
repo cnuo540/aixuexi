@@ -10,7 +10,7 @@
 <body>
 <header class="site-header">
   <div class="container nav-shell">
-    <a class="logo" href="index.html"><span class="logo-mark">AI</span><span>AI分享</span></a>
+    <a class="logo" href="index.html"><span class="logo-mark">AI</span><span data-content="common.brand">AI分享</span></a>
     <nav class="main-nav" aria-label="主导航">
       <a href="index.html">首页</a>
       <a href="software.html">AI软件</a>
@@ -24,12 +24,12 @@
 <section class="hero">
   <div class="container">
     <div class="hero-card">
-      <span class="eyebrow">好用软件 · 实用教程 · 免费分享</span>
-      <h1>把我常用的 AI 软件和教程整理给你</h1>
-      <p class="lead">这里是个人软件分享平台。每个软件都按一行展示，包含软件图标、界面图、使用说明，以及需要输入对应密码才能查看的下载链接。</p>
+      <span class="eyebrow" data-content="index.eyebrow">好用软件 · 实用教程 · 免费分享</span>
+      <h1 data-content="index.heading">把我常用的 AI 软件和教程整理给你</h1>
+      <p class="lead" data-content="index.lead">这里是个人软件分享平台。每个软件都按一行展示，包含软件图标、界面图、使用说明，以及需要输入对应密码才能查看的下载链接。</p>
       <div class="hero-actions">
-        <a class="btn" href="software.html">查看软件列表</a>
-        <a class="btn secondary" href="tutorials.html">阅读使用教程</a>
+        <a class="btn" href="software.html" data-content="index.primaryAction">查看软件列表</a>
+        <a class="btn secondary" href="tutorials.html" data-content="index.secondaryAction">阅读使用教程</a>
       </div>
     </div>
   </div>
@@ -37,14 +37,18 @@
 <section class="section">
   <div class="container">
     <div class="section-head">
-      <div><h2>精选软件</h2><p>先放 3 个常用工具，后续可以继续添加。</p></div>
-      <a class="btn secondary" href="software.html">全部软件</a>
+      <div><h2 data-content="index.featuredTitle">精选软件</h2><p data-content="index.featuredText">先放 3 个常用工具，后续可以继续添加。</p></div>
+      <a class="btn secondary" href="software.html" data-content="index.allSoftwareButton">全部软件</a>
+    </div>
+    <div class="search-panel" data-search-panel>
+      <input type="search" data-product-search placeholder="搜索精选软件">
+      <span data-search-count></span>
     </div>
     <div class="product-list" data-products="featured" data-limit="3"></div>
   </div>
 </section>
 <section class="section">
-  <div class="container info-grid">
+  <div class="container info-grid" data-info-cards="index">
     <div class="info-card"><h3>一行一个产品</h3><p>图标、界面预览、使用说明、下载入口都放在同一行，查找更直观。</p></div>
     <div class="info-card"><h3>密码查看链接</h3><p>输入对应密码后，页面才会显示下载链接，适合简单分享。</p></div>
     <div class="info-card"><h3>纯静态网站</h3><p>HTML、CSS、JS 即可运行，双击 index.html 就能本地预览。</p></div>
@@ -52,7 +56,7 @@
 </section>
 </main>
 <footer class="footer">
-  <div class="container">© 2026 AI分享 · 个人软件分享与知识记录平台</div>
+  <div class="container" data-content="common.footer">© 2026 AI分享 · 个人软件分享与知识记录平台</div>
 </footer>
 <script src="assets/js/main.js"></script>
 </body>

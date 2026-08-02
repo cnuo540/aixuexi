@@ -1,0 +1,82 @@
+[
+  {
+    "id": "writer",
+    "name": "智能写作助手",
+    "tag": "文案 / 摘要 / 改写",
+    "version": "v2.1",
+    "icon": "assets/img/icons/writer.svg",
+    "preview": "assets/img/previews/writer.svg",
+    "desc": "适合日常写作、文章摘要、标题生成和内容润色。",
+    "steps": [
+      "下载并解压软件包",
+      "按照教程填写基础配置",
+      "打开软件即可开始生成内容"
+    ],
+    "password": "ai123",
+    "url": "https://example.com/download/ai-writer"
+  },
+  {
+    "id": "image",
+    "name": "AI 绘图工具",
+    "tag": "图片生成 / 素材制作",
+    "version": "v1.8",
+    "icon": "assets/img/icons/image.svg",
+    "preview": "assets/img/previews/image.svg",
+    "desc": "用于快速生成封面图、头像、网页配图和产品展示素材。",
+    "steps": [
+      "安装运行环境",
+      "导入提示词模板",
+      "选择尺寸后开始生成"
+    ],
+    "password": "pic888",
+    "url": "https://example.com/download/ai-image"
+  },
+  {
+    "id": "office",
+    "name": "办公自动化助手",
+    "tag": "表格 / 文档 / 批处理",
+    "version": "v3.0",
+    "icon": "assets/img/icons/office.svg",
+    "preview": "assets/img/previews/office.svg",
+    "desc": "帮助整理表格、批量处理文档、生成日报周报，提高办公效率。",
+    "steps": [
+      "下载后阅读说明文档",
+      "把文件放到 input 文件夹",
+      "点击开始批量处理"
+    ],
+    "password": "office66",
+    "url": "https://example.com/download/office-helper"
+  },
+  {
+    "id": "video",
+    "name": "视频处理工具箱",
+    "tag": "剪辑 / 转码 / 字幕",
+    "version": "v1.5",
+    "icon": "assets/img/icons/video.svg",
+    "preview": "assets/img/previews/video.svg",
+    "desc": "支持常见视频格式转换、字幕提取、片段裁剪和批量压缩。",
+    "steps": [
+      "选择视频文件或文件夹",
+      "设置输出格式与清晰度",
+      "开始处理并查看输出目录"
+    ],
+    "password": "video99",
+    "url": "https://example.com/download/video-box"
+  },
+  {
+    "id": "prompt",
+    "name": "提示词管理器",
+    "tag": "Prompt / 模板库",
+    "version": "v1.2",
+    "icon": "assets/img/icons/prompt.svg",
+    "preview": "assets/img/previews/prompt.svg",
+    "desc": "用于收藏、分类和快速调用常用提示词，适合知识分享和内容创作。",
+    "steps": [
+      "导入内置模板库",
+      "按场景新建分类",
+      "一键复制提示词到 AI 工具"
+    ],
+    "password": "prompt5",
+    "url": "https://example.com/download/prompt-manager"
+  }
+]
