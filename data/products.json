@@ -31,31 +31,32 @@
     ]
   },
   {
-    "id": "image",
-    "name": "AI 绘图工具",
-    "tag": "图片生成 / 素材制作",
-    "version": "v1.8",
-    "icon": "assets/img/icons/image.svg",
-    "preview": "assets/img/previews/image.svg",
+    "id": "02",
+    "name": "AI 合同风险扫描仪",
+    "tag": "AI / 合同扫描",
+    "version": "v1.0",
+    "icon": "assets/images/image-icon-20260806144314-mn3xl.png",
+    "preview": "assets/images/image-preview-1-20260806144122-njc32.png",
     "previewImages": [
-      "assets/img/previews/image.svg"
+      "assets/images/image-preview-1-20260806144122-njc32.png",
+      "assets/images/image-preview-2-20260806144133-pdkey.png"
     ],
-    "desc": "用于快速生成封面图、头像、网页配图和产品展示素材。",
+    "desc": "1.下载密码：ai123",
     "steps": [
-      "安装运行环境",
-      "导入提示词模板",
-      "选择尺寸后开始生成"
+      "输入密码下载软件包",
+      "按照抖音教程填安装使用",
+      "后续优化建议QQ联系"
     ],
-    "password": "pic888",
-    "url": "https://example.com/download/ai-image",
+    "password": "ai123",
+    "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYGvBcyAZ",
     "links": [
       {
         "label": "下载链接 1",
-        "url": "https://example.com/download/ai-image"
+        "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYGvBcyAZ"
       },
       {
-        "label": "备用链接",
-        "url": ""
+        "label": "抖音教程地址：",
+        "url": "https://v.douyin.com/_7RgQe_DD2k/"
       }
     ]
   },
