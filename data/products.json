@@ -61,31 +61,32 @@
     ]
   },
   {
-    "id": "office",
-    "name": "办公自动化助手",
-    "tag": "表格 / 文档 / 批处理",
-    "version": "v3.0",
-    "icon": "assets/img/icons/office.svg",
-    "preview": "assets/img/previews/office.svg",
+    "id": "03",
+    "name": "视频压缩工具",
+    "tag": "视频 /压缩/ MP4压缩",
+    "version": "v1.0",
+    "icon": "assets/images/03-icon-20260807071712-7vcdg.jpg",
+    "preview": "assets/images/03-preview-1-20260807071753-9d5hj.png",
     "previewImages": [
-      "assets/img/previews/office.svg"
+      "assets/images/03-preview-1-20260807071753-9d5hj.png",
+      "assets/images/03-preview-2-20260807071815-0s7xx.png"
     ],
-    "desc": "帮助整理表格、批量处理文档、生成日报周报，提高办公效率。",
+    "desc": "1.下载密码：ai123",
     "steps": [
-      "下载后阅读说明文档",
-      "把文件放到 input 文件夹",
-      "点击开始批量处理"
+      "将大疆无人机视频压缩",
+      "从1G压缩至60MB",
+      "压缩时间预计3分钟"
     ],
-    "password": "office66",
-    "url": "https://example.com/download/office-helper",
+    "password": "ai123",
+    "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYDPWEdRY",
     "links": [
       {
         "label": "下载链接 1",
-        "url": "https://example.com/download/office-helper"
+        "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYDPWEdRY"
       },
       {
-        "label": "备用链接",
-        "url": ""
+        "label": "抖音教程地址：",
+        "url": "https://v.douyin.com/_7RgQe_DD2k/"
       }
     ]
   },
