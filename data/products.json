@@ -91,31 +91,32 @@
     ]
   },
   {
-    "id": "video",
-    "name": "视频处理工具箱",
-    "tag": "剪辑 / 转码 / 字幕",
-    "version": "v1.5",
-    "icon": "assets/img/icons/video.svg",
-    "preview": "assets/img/previews/video.svg",
+    "id": "04",
+    "name": "codex模型热切换工具",
+    "tag": "codex / 模型 / 热切换",
+    "version": "v1.0",
+    "icon": "assets/images/04-icon-20260809034410-vvi48.jpg",
+    "preview": "assets/images/04-preview-1-20260809034456-gb5in.png",
     "previewImages": [
-      "assets/img/previews/video.svg"
+      "assets/images/04-preview-1-20260809034456-gb5in.png",
+      "assets/images/04-preview-2-20260809034508-z3k0n.png"
     ],
-    "desc": "支持常见视频格式转换、字幕提取、片段裁剪和批量压缩。",
+    "desc": "1.下载密码：ai123",
     "steps": [
-      "选择视频文件或文件夹",
-      "设置输出格式与清晰度",
-      "开始处理并查看输出目录"
+      "前提条件登录GPT账号！",
+      "先启动热切换工具",
+      "再启动codex"
     ],
-    "password": "video99",
-    "url": "https://example.com/download/video-box",
+    "password": "ai123",
+    "url": "https://pan.baidu.com/s/1YaSpoycw4SZzhE5mdT4mHw?pwd=1234",
     "links": [
       {
         "label": "下载链接 1",
-        "url": "https://example.com/download/video-box"
+        "url": "https://pan.baidu.com/s/1YaSpoycw4SZzhE5mdT4mHw?pwd=1234"
       },
       {
-        "label": "备用链接",
-        "url": ""
+        "label": "Github仓库地址：",
+        "url": "https://github.com/cnuo540/aixuexi.git"
       }
     ]
   },
