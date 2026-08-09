@@ -121,31 +121,31 @@
     ]
   },
   {
-    "id": "prompt",
-    "name": "提示词管理器",
-    "tag": "Prompt / 模板库",
-    "version": "v1.2",
-    "icon": "assets/img/icons/prompt.svg",
-    "preview": "assets/img/previews/prompt.svg",
+    "id": "05",
+    "name": "图片压缩工具",
+    "tag": "图片 / 压缩",
+    "version": "v2.0",
+    "icon": "assets/images/05-icon-20260809043131-obc12.ico",
+    "preview": "assets/images/05-preview-1-20260809043155-yct4z.png",
     "previewImages": [
-      "assets/img/previews/prompt.svg"
+      "assets/images/05-preview-1-20260809043155-yct4z.png"
     ],
-    "desc": "用于收藏、分类和快速调用常用提示词，适合知识分享和内容创作。",
+    "desc": "1.下载密码：ai123",
     "steps": [
-      "导入内置模板库",
-      "按场景新建分类",
-      "一键复制提示词到 AI 工具"
+      "上传需要需要压缩的图片",
+      "点击压缩",
+      "压缩的图片在同路径"
     ],
-    "password": "prompt5",
-    "url": "https://example.com/download/prompt-manager",
+    "password": "ai123",
+    "url": "https://pan.baidu.com/s/1qVKkScJoG4F3oHCsekLEmQ?pwd=1234",
     "links": [
       {
         "label": "下载链接 1",
-        "url": "https://example.com/download/prompt-manager"
+        "url": "https://pan.baidu.com/s/1qVKkScJoG4F3oHCsekLEmQ?pwd=1234"
       },
       {
-        "label": "备用链接",
-        "url": ""
+        "label": "抖音教程地址：",
+        "url": "https://v.douyin.com/_7RgQe_DD2k/"
       }
     ]
   }
