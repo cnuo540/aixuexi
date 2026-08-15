@@ -37,11 +37,11 @@
     "tag": "仓库 /微盘 / ERP",
     "version": "v4.5",
     "icon": "assets/images/01-image-icon-20260802164309-pmg13.png",
-    "preview": "assets/images/01-preview-1-20260815034601-046yx.png",
+    "preview": "assets/images/02-preview-1-20260815035337-2eprv.jpg",
     "previewImages": [
-      "assets/images/01-preview-1-20260815034601-046yx.png",
-      "assets/images/01-preview-2-20260815034611-dg8db.png",
-      "assets/images/01-preview-3-20260815034623-1ze8t.png"
+      "assets/images/02-preview-1-20260815035337-2eprv.jpg",
+      "assets/images/02-preview-2-20260815035348-owt13.jpg",
+      "assets/images/02-preview-3-20260815035358-ucq0k.jpg"
     ],
     "desc": "1.下载密码：ai123",
     "steps": [
@@ -50,11 +50,11 @@
       "后续优化建议QQ联系"
     ],
     "password": "ai123",
-    "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYCS0ksjN",
+    "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYkmUmkfs",
     "links": [
       {
         "label": "下载链接 1",
-        "url": "https://pan.baidu.com/s/1u8DhhYcEBOjznVRo4nAYYQ?pwd=1234"
+        "url": "https://drive.weixin.qq.com/s?k=AOUAAwfFABYkmUmkfs"
       },
       {
         "label": "抖音教程地址：",
